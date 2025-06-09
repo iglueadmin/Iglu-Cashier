@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iglu Cashier</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f8f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 2em 1em;
+      gap: 2em;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      margin-bottom: 1em;
+      user-select: none;
+      padding: 1em 2em;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #00FFFF, #00cfd1);
+      box-shadow: 0 0 15px #00FFFF;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      box-shadow: 0 0 8px 3px white;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .header-text {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #fff; /* white text */
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      position: relative;
+      animation: glowMove 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowMove {
+      0% {
+        text-shadow:
+          0 0 8px #fff,
+          0 0 20px #00ffff,
+          0 0 30px #00ffff,
+          0 0 40px #00ffff,
+          0 0 50px #00ffff;
+        color: #fff;
+      }
+      50% {
+        text-shadow:
+          0 0 12px #a0f7ff,
+          0 0 25px #a0f7ff,
+          0 0 40px #a0f7ff,
+          0 0 55px #a0f7ff,
+          0 0 70px #a0f7ff;
+        color: #fff;
+      }
+      100% {
+        text-shadow:
+          0 0 8px #fff,
+          0 0 20px #00ffff,
+          0 0 30px #00ffff,
+          0 0 40px #00ffff,
+          0 0 50px #00ffff;
+        color: #fff;
+      }
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 2em;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      border: 2px solid #00FFFF;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #00FFFF;
+      margin-bottom: 0.75em;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 0.8em;
+      font-size: 1rem;
+      border: 2px solid #00FFFF;
+      border-radius: 10px;
+      margin-bottom: 1.2em;
+      outline: none;
+    }
+
+    input[type="number"] {
+      padding-left: 2em; /* space for peso sign */
+      position: relative;
+    }
+
+    /* Peso sign inside price input */
+    .item-row {
+      display: flex;
+      gap: 0.8em;
+      position: relative;
+    }
+    .peso-sign {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #00cfd1;
+      font-weight: 900;
+      pointer-events: none;
+      user-select: none;
+      font-size: 1rem;
+    }
+
+    .item-row input[type="number"] {
+      flex: 1;
+    }
+
+    .item-row input[type="text"] {
+      flex: 2;
+    }
+
+    .item-row button.remove-item {
+      flex-shrink: 0;
+      background-color: #ff4c4c;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      line-height: 28px;
+      padding: 0;
+      transition: background-color 0.3s ease;
+    }
+
+    .item-row button.remove-item:hover {
+      background-color: #cc0000;
+    }
+
+    .add-item-button {
+      padding: 0.6em 1.2em;
+      background-color: #00FFFF;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background-color 0.3s ease;
+      margin-bottom: 1em;
+    }
+
+    .add-item-button:hover {
+      background-color: #00cfd1;
+    }
+
+    button.submit-button {
+      padding: 0.9em 1.5em;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 15px;
+      background-color: #00FFFF;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: 0.5em;
+    }
+
+    button.submit-button:hover {
+      background-color: #00cfd1;
+      transform: translateY(-2px);
+    }
+
+    #response {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #00AAAA;
+      min-height: 1.5em;
+      margin-top: 0.3em;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 1.5em;
+      }
+      .header-text {
+        font-size: 2.5rem;
+      }
+      .logo {
+        width: 50px;
+        height: 50px;
+      }
+      button.submit-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-HMxVQRNPTRZkJrCs8DkfTY2Oli9YHLx9Jg&s" alt="Iglu Logo" />
+    </div>
+    <div class="header-text">IGLU</div>
+  </header>
+
+  <div class="container">
+    <h1>Iglu Cashier</h1>
+
+    <div class="items-container" id="itemsContainer">
+      <!-- Dynamic item rows will be appended here -->
+    </div>
+
+    <button class="add-item-button" onclick="addItem()">+ Add Item</button>
+
+    <button class="submit-button" onclick="submitOrder()">Submit Order</button>
+
+    <p id="response"></p>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcemJOk36WeIY3jDETdV1f3YfFTZzRoScjpNUTq4ZbJsS7btEdG6VCp9jU8dV39COJ/exec';
+
+    const itemsContainer = document.getElementById('itemsContainer');
+    const responseEl = document.getElementById('response');
+
+    function addItem(type = '', price = '') {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+
+      const typeInput = document.createElement('input');
+      typeInput.type = 'text';
+      typeInput.placeholder = 'Item Type';
+      typeInput.value = type;
+      typeInput.required = true;
+
+      const priceWrapper = document.createElement('div');
+      priceWrapper.style.position = 'relative';
+      priceWrapper.style.flex = '1';
+
+      const pesoSign = document.createElement('span');
+      pesoSign.className = 'peso-sign';
+      pesoSign.textContent = '₱';
+
+      const priceInput = document.createElement('input');
+      priceInput.type = 'number';
+      priceInput.placeholder = '0.00';
+      priceInput.min = '0';
+      priceInput.step = '0.01';
+      priceInput.value = price;
+      priceInput.required = true;
+      priceInput.style.paddingLeft = '1.5em';
+
+      priceWrapper.appendChild(pesoSign);
+      priceWrapper.appendChild(priceInput);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-item';
+      removeBtn.textContent = '×';
+      removeBtn.title = 'Remove this item';
+      removeBtn.onclick = () => row.remove();
+
+      row.appendChild(typeInput);
+      row.appendChild(priceWrapper);
+      row.appendChild(removeBtn);
+
+      itemsContainer.appendChild(row);
+    }
+
+    // Add initial one item row
+    addItem();
+
+    function submitOrder() {
+      responseEl.textContent = '';
+
+      const rows = [...itemsContainer.querySelectorAll('.item-row')];
+      if (rows.length === 0) {
+        alert('Please add at least one item.');
+        return;
+      }
+
+      let allValid = true;
+      const items = [];
+
+      rows.forEach(row => {
+        const type = row.querySelector('input[type="text"]').value.trim();
+        const priceInput = row.querySelector('input[type="number"]');
+        const priceStr = priceInput.value.trim();
+        const price = parseFloat(priceStr);
+
+        if (!type) {
+          allValid = false;
+          alert('Please enter an item type for all items.');
+          return;
+        }
+        if (isNaN(price) || price < 0) {
+          allValid = false;
+          alert('Please enter a valid positive price for all items.');
+          return;
+        }
+
+        items.push({ type, price });
+      });
+
+      if (!allValid) return;
+
+      const now = new Date();
+      const date = now.toLocaleDateString();
+      const time = now.toLocaleTimeString();
+
+      responseEl.textContent = 'Submitting...';
+
+      const submitBtn = document.querySelector('.submit-button');
+      submitBtn.disabled = true;
+
+      let failureCount = 0;
+
+      const promises = items.map(item => {
+        const params = new URLSearchParams();
+        params.append('Type', item.type);
+        params.append('Price', item.price.toFixed(2));
+        params.append('Date', date);
+        params.append('Time', time);
+
+        return fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString()
+        })
+        .then(response => response.text())
+        .catch(err => {
+          failureCount++;
+          console.error(err);
+        });
+      });
+
+      Promise.all(promises).then(() => {
+        submitBtn.disabled = false;
+        if (failureCount === 0) {
+          responseEl.textContent = 'Order saved successfully!';
+          // Clear inputs after successful submission
+          itemsContainer.innerHTML = '';
+          addItem();
+        } else {
+          responseEl.textContent = `Saved with ${failureCount} errors. Check console.`;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
